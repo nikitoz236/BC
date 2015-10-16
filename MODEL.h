@@ -52,7 +52,7 @@ public:
 
 };
 
-class ObdTagIntger : ObdTag
+class ObdTagIntger : public ObdTag
 {
 public:
 	uint16_t tag_value;
@@ -60,7 +60,7 @@ public:
 	ObdTagIntger(obdValsEnum type);
 };
 
-class ObdTagFloat : ObdTag
+class ObdTagFloat : public  ObdTag
 {
 public:
 	double tag_value;
@@ -101,7 +101,8 @@ public:
 
 	bool connection_established;
 
-	ObdTag* tags_array[];
+	// с пустыми скобками - некорректное обьявление массива было
+	ObdTag* tags_array[8];
 
 	ObdTagIntger* rpm;
 	ObdTagIntger* speed;

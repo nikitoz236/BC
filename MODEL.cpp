@@ -9,7 +9,12 @@ MODEL::MODEL(void)
 {
 
 	ObdTagIntger* rpm = new ObdTagIntger(RPM);
+	tags_array[0] = rpm;
+
 	ObdTagIntger* speed = new ObdTagIntger(SPEED);
+
+	
+
 	ObdTagIntger throttle(THROTTLE);
 	ObdTagFloat temp_engine(ENGINE_T, 2);
 	ObdTagFloat temp_intake(INTAKE_T, 2);
