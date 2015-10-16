@@ -9,8 +9,6 @@
 
 #include "MODEL.h"
 #include "VIEW.h"
-#define analog_voltage_pin A6
-#define analog_tank_pin A7
 
 #include <Arduino.h>
 #include <SPI.h>
@@ -26,6 +24,10 @@
 
 
 LCD_ILI9341 lcd;
+
+MODEL* comp = new MODEL();
+VIEW view;
+
 unsigned char a;
 
 unsigned long obd_time = 0;
@@ -45,6 +47,9 @@ void setup()
   PORTC |= 0x01;
 
   analogReference(DEFAULT);
+
+
+
   lcd.setBackLight(0);
   lcd.begin();
   lcd.clear();
@@ -138,36 +143,9 @@ void setup()
     
     obd_routine(); 
   }
-  
 
-//    redraw_color_test();
-//
-//  while(1)
-//  {
-//    scan_buttons();
-//    buttons_helper();
-//  }
 
-  console cons;
-  
-  cons.print(F("Send request to ECU"));
-  obd_read_memory_request(16, 16);
-  
-  
-  while(!obd_available())
-  {
-    obd_routine();
-  }
-  cons.print(F("\n\rRecieved data:\r\n"));
-  for(int i = 0; i < 16; i++)
-  {
-      if(obd_buffer[i] < 16)cons.print("0");
-      cons.print(obd_buffer[i], HEX);
-      cons.print(" ");
-  }
-  cons.print(F("\n\rErrors: "));  
-  cons.print(obd_get_errors(), BIN);  
-  
+
 
 
  
@@ -180,91 +158,6 @@ void setup()
 
 //================================================================================================================================================================================================
 
-
-void print_items(int y_begin, int acive_item, int items_amount)
-{
-  lcd.setFontSize(FONT_SIZE_SMALL);
-    lcd.setBackColor(0x3456);
-  for(int i = 0; i < items_amount; i++)
-  {
-    lcd.setCursor(0, y_begin + i);
-    if(i == acive_item) lcd.setColor(VGA_WHITE);
-    else lcd.setColor(VGA_RED);
-    lcd.print("item");
-    lcd.print(i);    
-  }
-
-}
-
-
-
-
-
-int   active  = 0;
-
-
-void loop()
-{
-
-//  print_items(6, active, 11);
-//  if((a & BTNUP) == 0)
-//  { 
-//    lcd.print("UP ");
-//    if (active > 0) active--;
-//  }
-//  
-//  if((a & BTNDN) == 0)
-//  { 
-//    lcd.print("DN ");
-//    if (active < 10) active++;
-//  }
-
-
-}
-
-
-
-
-
-
-
-
-//================================================================================================================================================================================================
-
-
-
-
-
-
-
-
-uint16_t bgrcol = 0x0000;
-uint16_t txtcol = 0xFFFF;
-
-void redraw_color_test(void)
-{
-
-  lcd.fill(100, 200, 100, 131, bgrcol);
-  lcd.setXY(100, 100);
-  lcd.setColor(txtcol);
-  lcd.setBackColor(bgrcol);
-  lcd.setFontSize(FONT_SIZE_MEDIUM);
-  lcd.print("test");
-  lcd.setXY(100, 116);
-  lcd.setFontSize(FONT_SIZE_SMALL);
-  lcd.print(123, HEX);
-
-  lcd.setBackColor(0x0000);
-  lcd.setFontSize(FONT_SIZE_MEDIUM);
-  lcd.setXY(100, 132);
-  lcd.setColor(txtcol);
-  lcd.print(txtcol, HEX);
-  
-  lcd.setXY(100, 148);
-  lcd.setColor(bgrcol);
-  lcd.print(bgrcol, HEX);
-  
-}
 
 void scan_buttons(void)
 {  

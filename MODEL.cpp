@@ -8,8 +8,8 @@
 MODEL::MODEL(void)
 {
 
-	ObdTagIntger rpm(RPM);
-	ObdTagIntger speed(SPEED);
+	ObdTagIntger* rpm = new ObdTagIntger(RPM);
+	ObdTagIntger* speed = new ObdTagIntger(SPEED);
 	ObdTagIntger throttle(THROTTLE);
 	ObdTagFloat temp_engine(ENGINE_T, 2);
 	ObdTagFloat temp_intake(INTAKE_T, 2);
@@ -17,7 +17,7 @@ MODEL::MODEL(void)
 	ObdTagFloat pressure_intake(INTAKE_PRESSURE, 2);
 	ObdTagFloat injection(INJECTION, 2);
 
-	ObdTagFloat consumption_h(FUEL_CONS, 2);
+	ObdTagFloat consumption_h(FUEL_CONS_H, 2);
 	ObdTagFloat fuel_total(FUEL_TOTAL, 2);
 
 	Timer analog_reading_timer(ANALOG_READING_TIMEOUT);
@@ -65,6 +65,10 @@ void MODEL::routine(void)
 
 	if (obd_waiting_timer.isOver)
 	{
+		speed.tag_value= 0;
+		rpm.tag_value = 0;
+		injection.tag_value = 0;
+
 		memory_offset = 0;
 		connection_established = false;
 		obd_waiting_timer.reset();
@@ -87,7 +91,7 @@ void MODEL::routine(void)
 		obd_waiting_timer.reset();
 	}
 
-
+	ecu.routine();
 }
 
 

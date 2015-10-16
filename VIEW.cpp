@@ -48,20 +48,25 @@ void IntValueMedium::update(void)
 }
 
 
-void IntValueMedium::IntValueMedium(ObdTagIntger* a)
+
+FloatValueMedium::FloatValueMedium(ObdTagFloat* arg)
 {
-	tag = a;
+	tag = arg;
 }
 
-
-void VIEW::VIEW()
+IntValueMedium::IntValueMedium(ObdTagIntger* arg)
 {
-	IntValueMedium rpm(comp.rpm);
-	IntValueMedium speed;
-	FloatValueMedium temp_engine;
-	FloatValueMedium temp_intake;
-	FloatValueMedium injection;
-	FloatValueMedium consumption_h;
-	FloatValueMedium fuel_total;
+	tag = arg;
+}
+
+VIEW::VIEW(void)
+{
+	IntValueMedium* rpm = new IntValueMedium(comp->rpm);
+	IntValueMedium* speed = new IntValueMedium(comp->speed);
+	FloatValueMedium* temp_engine = new FloatValueMedium(comp.temp_engine);
+	FloatValueMedium* temp_intake = new FloatValueMedium(comp.temp_intake);
+	FloatValueMedium* injection = new FloatValueMedium(comp.injection);
+	FloatValueMedium* consumption_h = new FloatValueMedium(comp.consumption_h);
+	FloatValueMedium* fuel_total = new FloatValueMedium(comp.fuel_total);
 
 }

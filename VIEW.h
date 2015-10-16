@@ -12,10 +12,35 @@
 	#include "WProgram.h"
 #endif
 
+
+
+
+
+class VIEW
+{
+public:
+	IntValueMedium* rpm;
+	IntValueMedium* speed;
+	FloatValueMedium* temp_engine;
+	FloatValueMedium* temp_intake;
+	FloatValueMedium* injection;
+	FloatValueMedium* consumption_h;
+	FloatValueMedium* fuel_total
+	
+	VIEW(void);
+
+};
+
+
+
+
+
+
 class DisplayObject
 {
 public:
-	uint16_t position_x;
+	uint16_t position_x_text;
+	uint16_t position_x_value;
 	uint16_t position_y;
 	void draw(void);
 	void update(void);
@@ -24,7 +49,11 @@ public:
 
 class IntValueMedium : DisplayObject
 {
-
+public:
+	ObdTagIntger* tag;
+	void draw(void);
+	void update(void);
+	IntValueMedium(ObdTagIntger * arg);
 };
 
 class FloatValueMedium : DisplayObject
@@ -33,7 +62,7 @@ public:
 	ObdTagFloat* tag;
 	void draw(void);
 	void update(void);
-
+	FloatValueMedium(ObdTagFloat * arg);
 };
 
 

@@ -101,15 +101,18 @@ public:
 
 	bool connection_established;
 
+	ObdTag* tags_array[];
 
-	ObdTagIntger rpm;
-	ObdTagIntger speed;
-	ObdTagIntger throttle;
-	ObdTagFloat temp_engine;
-	ObdTagFloat temp_intake;
-	ObdTagFloat pressure_atm;
-	ObdTagFloat pressure_intake;
-	ObdTagFloat injection;
+	ObdTagIntger* rpm;
+	ObdTagIntger* speed;
+	ObdTagIntger* throttle;
+	ObdTagFloat* temp_engine;
+	ObdTagFloat* temp_intake;
+	ObdTagFloat* pressure_atm;
+	ObdTagFloat* pressure_intake;
+	ObdTagFloat* injection;
+
+
 
 	ObdTagFloat consumption_h;
 	ObdTagFloat fuel_total;
