@@ -25,7 +25,7 @@
 #define analog_voltage_pin A6
 #define analog_tank_pin A7
 
-
+#define TAGS_AMOUNT FUEL_TOTAL + 1
 
 enum obdValsEnum
 {
@@ -49,7 +49,9 @@ class ObdTag
 {
 public:
 	obdValsEnum val_type;	
-
+	bool isFloat;
+	uint16_t tag_value;
+	unsigned char digits;
 };
 
 class ObdTagIntger : ObdTag
@@ -64,7 +66,7 @@ class ObdTagFloat : ObdTag
 {
 public:
 	double tag_value;
-	unsigned char digits;
+//	unsigned char digits;
 
 	ObdTagFloat(obdValsEnum type, unsigned char dig);
 };
@@ -101,30 +103,27 @@ public:
 
 	bool connection_established;
 
-	ObdTag* tags_array[];
+	ObdTag* tags_array[TAGS_AMOUNT];
 
-	ObdTagIntger* rpm;
-	ObdTagIntger* speed;
-	ObdTagIntger* throttle;
-	ObdTagFloat* temp_engine;
-	ObdTagFloat* temp_intake;
-	ObdTagFloat* pressure_atm;
-	ObdTagFloat* pressure_intake;
-	ObdTagFloat* injection;
-
-
-
-	ObdTagFloat consumption_h;
-	ObdTagFloat fuel_total;
+	//ObdTagIntger* rpm;
+	//ObdTagIntger* speed;
+	//ObdTagIntger* throttle;
+	//ObdTagFloat* temp_engine;
+	//ObdTagFloat* temp_intake;
+	//ObdTagFloat* pressure_atm;
+	//ObdTagFloat* pressure_intake;
+	//ObdTagFloat* injection;
+	//ObdTagFloat consumption_h;
+	//ObdTagFloat fuel_total;
 
 private:
 
 	unsigned char memory_offset;
 
-	OBD ecu;
-	Timer analog_reading_timer;
-	Timer obd_waiting_timer;
-	Timer obd_period_timer;
+	OBD* ecu;
+	Timer* analog_reading_timer;
+	Timer* obd_waiting_timer;
+	Timer* obd_period_timer;
 
 
 };

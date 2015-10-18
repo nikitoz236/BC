@@ -6,67 +6,71 @@
 
 
 
+DisplayObject::DisplayObject(ObdTag* tag)
+{
+	tag_ = tag;
+}
+
 unsigned char DisplayObject::getUnitsType(obdValsEnum type)
 {
 	return UnitsResolution[type];
 }
 
-void FloatValueMedium::draw(void)
+void DisplayObject::draw(void)
 {
 	lcd.setXY(position_x_text, position_y);
 	lcd.setFontSize(FONT_SIZE_MEDIUM);
-	lcd.setColor(VGA_YELLOW);
-	lcd.print(obdParametersNames[tag->val_type]);
+	lcd.setColor(0x5555);
+	lcd.print(obdParametersNames[tag_->val_type]);
+
+	this->update();
 }
 
-void FloatValueMedium::update(void)
+void DisplayObject::update(void)
 {
 	lcd.setXY(position_x_value, position_y);
-	lcd.setColor(0x5555);
-	lcd.print(tag->tag_value, tag->digits);
-	lcd.print(" ");
-	lcd.print(obdParametersUnits[getUnitsType(tag->val_type));
-	lcd.print("    ");
-}
-
-void IntValueMedium::draw(void)
-{
-	lcd.setXY(position_x_text, position_y);
-	lcd.setFontSize(FONT_SIZE_MEDIUM);
 	lcd.setColor(VGA_YELLOW);
-	lcd.print(obdParametersNames[tag->val_type]);
-}
-
-void IntValueMedium::update(void)
-{
-	lcd.setXY(position_x_value, position_y);
-	lcd.setColor(0x5555);
-	lcd.print(tag->tag_value, DEC);
+	if(tag_->isFloat) lcd.print(tag_->tag_value, tag_->digits);
+	else lcd.print(tag_->tag_value, DEC);
 	lcd.print(" ");
-	lcd.print(obdParametersUnits[getUnitsType(tag->val_type));
+	lcd.print(obdParametersUnits[getUnitsType(tag_->val_type)]);
 	lcd.print("    ");
 }
 
 
 
-FloatValueMedium::FloatValueMedium(ObdTagFloat* arg)
+
+Layout::Layout(uint16_t position)
 {
-	tag = arg;
+	layout_array[0] = new DisplayObject(comp->tags_array[RPM]);
+	layout_array[1] = new DisplayObject(comp->tags_array[SPEED]);
+	layout_array[2] = new DisplayObject(comp->tags_array[ENGINE_T]);
+	layout_array[3] = new DisplayObject(comp->tags_array[INTAKE_T]);
+	layout_array[4] = new DisplayObject(comp->tags_array[INJECTION]);
+	layout_array[5] = new DisplayObject(comp->tags_array[FUEL_CONS_H]);
+	layout_array[6] = new DisplayObject(comp->tags_array[FUEL_TOTAL]);
+
+	for (int i = 0; i < 7; i++)
+	{
+		layout_array[i]->position_x_text = 12;
+		layout_array[i]->position_x_value = 160;
+		layout_array[i]->position_y = i * 24 + position;
+	}
 }
 
-IntValueMedium::IntValueMedium(ObdTagIntger* arg)
+
+void Layout::draw(void)
 {
-	tag = arg;
+	for (int i = 0; i < 7; i++)
+	{
+		layout_array[i]->draw();
+	}
 }
 
-VIEW::VIEW(void)
+void Layout::update(void)
 {
-	IntValueMedium* rpm = new IntValueMedium(comp->rpm);
-	IntValueMedium* speed = new IntValueMedium(comp->speed);
-	FloatValueMedium* temp_engine = new FloatValueMedium(comp.temp_engine);
-	FloatValueMedium* temp_intake = new FloatValueMedium(comp.temp_intake);
-	FloatValueMedium* injection = new FloatValueMedium(comp.injection);
-	FloatValueMedium* consumption_h = new FloatValueMedium(comp.consumption_h);
-	FloatValueMedium* fuel_total = new FloatValueMedium(comp.fuel_total);
-
+	for (int i = 0; i < 7; i++)
+	{
+		layout_array[i]->update();
+	}
 }

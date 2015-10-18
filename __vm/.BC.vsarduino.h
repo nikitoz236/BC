@@ -5,7 +5,7 @@
 	        all non-arduino files created by visual micro and all visual studio project or solution files can be freely deleted and are not required to compile a sketch (do not delete your own code!).
 	        note: debugger breakpoints are stored in '.sln' or '.asln' files, knowledge of last uploaded breakpoints is stored in the upload.vmps.xml file. Both files are required to continue a previous debug session without needing to compile and upload again
 	
-	Hardware: Arduino Pro or Pro Mini (5V, 16 MHz) w/ ATmega328, Platform=BOARDS_DEFAULT, Package=arduino
+	Hardware: Arduino Pro or Pro Mini (5V, 16 MHz) w/ ATmega328, Platform=avr, Package=arduino
 */
 
 #ifndef _VSARDUINO_H_
@@ -14,14 +14,13 @@
 #define __AVR_ATmega328P__
 #define ARDUINO 105
 #define ARDUINO_MAIN
-#define printf iprintf
-#define __BOARDS_DEFAULT__
-#define __BOARDS_DEFAULT__
+#define __AVR__
+#define __avr__
 #define F_CPU 16000000L
 #define __cplusplus
 #define GCC_VERSION 40302
-#define ARDUINO_ARCH_BOARDS_DEFAULT
-#define ARDUINO_BOARDS_DEFAULT_PRO5V328
+#define ARDUINO_ARCH_AVR
+#define ARDUINO_AVR_PRO5V328
 #define __inline__
 #define __asm__(x)
 #define __extension__
@@ -30,62 +29,20 @@
 #define __inline__
 #define __asm__ 
 #define __volatile__
-
-
-#define __ICCARM__
-#define __ASM
-#define __INLINE
-#define __builtin_va_list void
-//#define _GNU_SOURCE 
-//#define __GNUC__ 0
-//#undef  __ICCARM__
-//#define __GNU__
-
-typedef long Pio;
-typedef long Efc;
-typedef long Adc;
-typedef long Pwm;
-typedef long Rtc;
-typedef long Rtt;
-typedef long pRtc;
-typedef long Spi;
-typedef long spi;
-typedef long Ssc;
-//typedef long p_scc;
-typedef long Tc;
-//typedef long pTc;
-typedef long Twi;
-typedef long Wdt;
-//typedef long pTwi;
-typedef long Usart;
-typedef long Pdc;
-typedef long Rstc;
-
-extern const int ADC_MR_TRGEN_DIS = 0;
-extern const int ADC_MR_TRGSEL_ADC_TRIG0 = 0;
-extern const int ADC_MR_TRGSEL_Pos = 0;
-
-extern const int ADC_MR_TRGSEL_Msk = 0;
-extern const int ADC_MR_TRGEN = 0;
-extern const int ADC_TRIG_TIO_CH_0 = 0;
-extern const int ADC_MR_TRGSEL_ADC_TRIG1 = 0;
-extern const int ADC_TRIG_TIO_CH_1 = 0;
-extern const int ADC_MR_TRGSEL_ADC_TRIG2 = 0;
-extern const int ADC_MR_TRGSEL_ADC_TRIG3 = 0;
-
-#define __ARMCC_VERSION 400678
-#define __attribute__(noinline)
-
+#define __AVR__
+typedef void *__builtin_va_list;
+#define __builtin_va_start
+#define __builtin_va_end
+//#define __DOXYGEN__
+#define __attribute__(x)
+#define NOINLINE __attribute__((noinline))
 #define prog_void
 #define PGM_VOID_P int
 
-
+#define NEW_H
             
 typedef unsigned char byte;
 extern "C" void __cxa_pure_virtual() {;}
-
-
-
 #include <arduino.h>
 #include <pins_arduino.h> 
 #undef F

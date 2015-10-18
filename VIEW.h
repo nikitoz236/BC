@@ -4,7 +4,7 @@
 #define _VIEW_h
 
 #include "MODEL.h"
-#include "MODEL.h"
+#include <MultiLCD.h>
 
 #if defined(ARDUINO) && ARDUINO >= 100
 	#include "arduino.h"
@@ -12,23 +12,43 @@
 	#include "WProgram.h"
 #endif
 
+extern LCD_ILI9341 lcd;
+extern MODEL* comp;
 
 
 
+const char obdParametersNames[][16] = {
+//     1234567890ABCDEF
+	{ "RPM            " },
+	{ "SPEED          " },
+	{ "ENGINE t       " },
+	{ "INTAKE t       " },
+	{ "INTAKE PRESSURE" },
+	{ "ATM PRESSURE   " },
+	{ "THROTTLE       " },
+	{ "OXY            " },
+	{ "INJECTION      " },
+	{ "FUEL CONS.     " },
+	{ "FUEL CONS.     " },
+	{ "FUEL TOTAL     " }
+};
 
-class VIEW
-{
-public:
-	IntValueMedium* rpm;
-	IntValueMedium* speed;
-	FloatValueMedium* temp_engine;
-	FloatValueMedium* temp_intake;
-	FloatValueMedium* injection;
-	FloatValueMedium* consumption_h;
-	FloatValueMedium* fuel_total
-	
-	VIEW(void);
+const unsigned char UnitsResolution[] = {
+	0, 1, 2, 2, 3, 3, 4, 5, 6, 7, 8, 9
+};
 
+
+const char obdParametersUnits[][8] = {
+	{ 0 },			// 0
+	{ "KM/H" },		// 1
+	{ "*C" },		// 2
+	{ "KPA" },		// 3
+	{ "%" },		// 4
+	{ "OXY" },		// 5
+	{ "MS" },		// 6
+	{ "L/100" },	// 7
+	{ "L/H " },		// 8
+	{ "L" },		// 9
 };
 
 
@@ -42,64 +62,24 @@ public:
 	uint16_t position_x_text;
 	uint16_t position_x_value;
 	uint16_t position_y;
+	ObdTag* tag_;
+	DisplayObject(ObdTag* tag);
 	void draw(void);
 	void update(void);
 	unsigned char getUnitsType(obdValsEnum type);
 };
 
-class IntValueMedium : DisplayObject
+class Layout
 {
 public:
-	ObdTagIntger* tag;
+	DisplayObject* layout_array[7];
+	Layout(void);
 	void draw(void);
 	void update(void);
-	IntValueMedium(ObdTagIntger * arg);
-};
-
-class FloatValueMedium : DisplayObject
-{
-public:
-	ObdTagFloat* tag;
-	void draw(void);
-	void update(void);
-	FloatValueMedium(ObdTagFloat * arg);
+	Layout(uint16_t position);
 };
 
 
-
-
-const unsigned char obdParametersNames[][] PROGMEM = {
-	{ "RPM" },
-	{ "SPEED" },
-	{ "ENGINE t" },
-	{ "INTAKE t" },
-	{ "INTAKE PRESSURE" },
-	{ "ATM PRESSURE" },
-	{ "THROTTLE" },
-	{ "OXY" },
-	{ "INJECTION" },
-	{ "FUEL CONS." },
-	{ "FUEL CONS." },
-	{ "FUEL TOTAL" }
-};
-
-const unsigned char UnitsResolution[] PROGMEM = {
-	0, 1, 2, 2, 3, 3, 4, 5, 6, 7, 8, 9
-};
-
-
-const unsigned char obdParametersUnits[][] PROGMEM = {
-	{ 0 },			// 0
-	{ "KM/H" },		// 1
-	{ "*C" },		// 2
-	{ "KPA" },		// 3
-	{ "%" },		// 4
-	{ "OXY" },		// 5
-	{ "MS" },		// 6
-	{ "L/100" },	// 7
-	{ "L/H " },		// 8
-	{ "L" },		// 9
-};
 
 
 #endif

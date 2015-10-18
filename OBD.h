@@ -14,9 +14,6 @@
 #define OBD_LENGTH_ERROR 2
 
 
-unsigned char obd_buffer[16];
-
-
 
 class OBD
 {

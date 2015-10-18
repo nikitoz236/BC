@@ -15,9 +15,9 @@
 #include <MultiLCD.h>
 //#include <avr/io.h>
 //#include <avr/interrupt.h>
-#include "console.h"
-#include "OBD.h"
-#include "screens.h"
+//#include "console.h"
+//#include "OBD.h"
+//#include "screens.h"
 #include "buttons.h"
 
 
@@ -26,15 +26,11 @@
 LCD_ILI9341 lcd;
 
 MODEL* comp = new MODEL();
-VIEW view;
+Layout* mylayout = new Layout(24);
+
+//DisplayObject* obj = new DisplayObject(comp->tags_array[]);
 
 unsigned char a;
-
-unsigned long obd_time = 0;
-unsigned long analog_time = 0;
-
-unsigned char memory_offset = 0;
-unsigned char mode = 1;
 
 
 void setup()
@@ -54,128 +50,58 @@ void setup()
   lcd.begin();
   lcd.clear();
   
+  lcd.setXY(0, 0);
+  lcd.print("HONDA NEW MODEL COMPUTER");
+  mylayout->draw();
 
-  prepare_parameters();
-  prepare_analogs();
+
+//  lcd.setXY(0, 24);
+//  lcd.print(obdParametersNames[3]);
+
+	  
+
   
   while(1)
   {
-    update_buttons();
-    if(button(BTNF2) && (mode != 1))
-    { 
-      mode = 1;
-      prepare_parameters();
-      memory_offset = 0;
-    }
+//	  comp->routine();
+//	  mylayout->update();
+  
     
-    if(button(BTNF1) && (mode != 0))
-    {
-      mode = 0;
-      prepare_map();
-      memory_offset = 0;
-    }
-
+    //if(millis() - analog_time > ANALOG_READING_TIMEOUT)
+    //{
+    //  draw_analogs();
+    //  analog_time = millis();
+    //  
+    //}
     
-    if((millis() - obd_time > OBD_WAITING_TIMEOUT) || (obd_available()))
-    {
-      if(mode == 0)
-      {
-        if(obd_available())
-        {
-          update_map(memory_offset);
-        }
-        else
-        {
-          lcd.setFontSize(FONT_SIZE_SMALL);
-          lcd.setCursor(36, dump_base_Y + 2 + memory_offset); 
-          lcd.print("                                               ");
-        }        
-        memory_offset++;
-        if(memory_offset == 16)
-        {
-          memory_offset = 0;
-          obd_period = millis() - obd_begin;
-          obd_begin = millis();
-        }
-      } else if(mode == 1)
-      {
-        if(obd_available())
-        {
-          calculate_parameters(memory_offset);
-        }
-        else
-        {
-          obdval_speed = 0;
-          obdval_rpm = 0;
-          obdval_inj = 0;
-        }
-        
-        memory_offset++;
-        if(memory_offset == 5)
-        {
-
-          
-          update_parameters();
-
-          memory_offset = 0;
-          obd_period = millis() - obd_begin;
-          obd_begin = millis();
-        }
-      
-      }
-      obd_read_memory_request(16 * memory_offset, 16);
-      obd_time = millis();
-      update_period(obd_period);      
-    }
-    
-    if(millis() - analog_time > ANALOG_READING_TIMEOUT)
-    {
-      draw_analogs();
-      analog_time = millis();
-      
-    }
-    
-    if(millis() < 1000)
-    {
-      obd_time = 0;
-      analog_time = 0;
-    }
-    
-    obd_routine(); 
+    //if(millis() < 1000)
+    //{
+    //  obd_time = 0;
+    //  analog_time = 0;
+    //}    
   }
-
-
-
-
-
- 
-  
-  
-
-
-
 }
 
 //================================================================================================================================================================================================
 
 
-void scan_buttons(void)
-{  
-  update_buttons();
-  if(button(BTNF1) && button(BTNUP)) bgrcol++;
-  if(button(BTNF1) && button(BTNDN)) bgrcol--;
-  if(button(BTNF1) && button(BTNLE)) bgrcol-=0x0100;
-  if(button(BTNF1) && button(BTNRI)) bgrcol+= 0x0100;
-  if(button(BTNF2) && button(BTNUP)) txtcol++;
-  if(button(BTNF2) && button(BTNDN)) txtcol--;
-  if(button(BTNF2) && button(BTNLE)) txtcol-=0x0100; 
-  if(button(BTNF2) && button(BTNRI)) txtcol+= 0x0100; 
-
-  if(button(BTNUP) || button(BTNDN) || button(BTNLE) || button(BTNRI))redraw_color_test();
-
-  delay(10);
-
-}
+//void scan_buttons(void)
+//{  
+//  update_buttons();
+//  if(button(BTNF1) && button(BTNUP)) bgrcol++;
+//  if(button(BTNF1) && button(BTNDN)) bgrcol--;
+//  if(button(BTNF1) && button(BTNLE)) bgrcol-=0x0100;
+//  if(button(BTNF1) && button(BTNRI)) bgrcol+= 0x0100;
+//  if(button(BTNF2) && button(BTNUP)) txtcol++;
+//  if(button(BTNF2) && button(BTNDN)) txtcol--;
+//  if(button(BTNF2) && button(BTNLE)) txtcol-=0x0100; 
+//  if(button(BTNF2) && button(BTNRI)) txtcol+= 0x0100; 
+//
+//  if(button(BTNUP) || button(BTNDN) || button(BTNLE) || button(BTNRI))redraw_color_test();
+//
+//  delay(10);
+//
+//}
 
 //================================================================================================================================================================================================
 
@@ -196,4 +122,9 @@ void buttons_helper(void)
   if((a & BTNF2) == 0) lcd.print("F2 ");
   lcd.print(a, HEX);
   lcd.print("                           ");
+}
+
+void loop(void)
+{
+
 }
