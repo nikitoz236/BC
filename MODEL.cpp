@@ -102,7 +102,7 @@ ObdTagIntger::ObdTagIntger(obdValsEnum type)
 	val_type = type;
 	tag_value = 0;
 	isFloat = 0;
-
+	digits = -1;
 }
 
 

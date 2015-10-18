@@ -13,7 +13,7 @@ DisplayObject::DisplayObject(ObdTag* tag)
 
 unsigned char DisplayObject::getUnitsType(obdValsEnum type)
 {
-	return UnitsResolution[type];
+	return pgm_read_byte(&UnitsResolution[type]);
 }
 
 void DisplayObject::draw(void)
@@ -21,21 +21,36 @@ void DisplayObject::draw(void)
 	lcd.setXY(position_x_text, position_y);
 	lcd.setFontSize(FONT_SIZE_MEDIUM);
 	lcd.setColor(0x5555);
-	lcd.print(obdParametersNames[tag_->val_type]);
+	lcd.print((__FlashStringHelper *)obdParametersNames[tag_->val_type]);
 
 	this->update();
 }
+
+void checkType(uint16_t a)
+{
+	lcd.print("INT");
+}
+
+void checkType(double a)
+{
+	lcd.print("FLO");
+}
+
+
 
 void DisplayObject::update(void)
 {
 	lcd.setXY(position_x_value, position_y);
 	lcd.setColor(VGA_YELLOW);
-	if(tag_->isFloat) lcd.print(tag_->tag_value, tag_->digits);
-	else lcd.print(tag_->tag_value, DEC);
+//	if(tag_->isFloat) lcd.print((double)tag_->tag_value, tag_->digits);
+//	else lcd.print((unsigned int)tag_->tag_value, DEC);
+
+	checkType(tag_->tag_value);
 	lcd.print(" ");
-	lcd.print(obdParametersUnits[getUnitsType(tag_->val_type)]);
+	lcd.print((__FlashStringHelper *)obdParametersUnits[getUnitsType(tag_->val_type)]);
 	lcd.print("    ");
 }
+
 
 
 

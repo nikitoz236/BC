@@ -58,16 +58,14 @@ class ObdTagIntger : ObdTag
 {
 public:
 	uint16_t tag_value;
-
 	ObdTagIntger(obdValsEnum type);
 };
 
 class ObdTagFloat : ObdTag
 {
 public:
-	double tag_value;
-//	unsigned char digits;
 
+	double tag_value;
 	ObdTagFloat(obdValsEnum type, unsigned char dig);
 };
 

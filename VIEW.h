@@ -17,9 +17,9 @@ extern MODEL* comp;
 
 
 
-const char obdParametersNames[][16] = {
+const char obdParametersNames[][16] PROGMEM = {
 //     1234567890ABCDEF
-	{ "RPM            " },
+	{ "RPM" },
 	{ "SPEED          " },
 	{ "ENGINE t       " },
 	{ "INTAKE t       " },
@@ -33,12 +33,12 @@ const char obdParametersNames[][16] = {
 	{ "FUEL TOTAL     " }
 };
 
-const unsigned char UnitsResolution[] = {
+const unsigned char UnitsResolution[] PROGMEM = {
 	0, 1, 2, 2, 3, 3, 4, 5, 6, 7, 8, 9
 };
 
 
-const char obdParametersUnits[][8] = {
+const char obdParametersUnits[][8] PROGMEM = {
 	{ 0 },			// 0
 	{ "KM/H" },		// 1
 	{ "*C" },		// 2
