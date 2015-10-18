@@ -54,14 +54,14 @@ public:
 	unsigned char digits;
 };
 
-class ObdTagIntger : ObdTag
+class ObdTagIntger : public ObdTag
 {
 public:
 	uint16_t tag_value;
 	ObdTagIntger(obdValsEnum type);
 };
 
-class ObdTagFloat : ObdTag
+class ObdTagFloat : public  ObdTag
 {
 public:
 
@@ -102,6 +102,7 @@ public:
 	bool connection_established;
 
 	ObdTag* tags_array[TAGS_AMOUNT];
+
 
 	//ObdTagIntger* rpm;
 	//ObdTagIntger* speed;

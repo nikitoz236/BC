@@ -7,22 +7,23 @@
 
 MODEL::MODEL(void)
 {
-	tags_array[RPM] = (ObdTag*)new ObdTagIntger(RPM);
-	tags_array[SPEED] = (ObdTag*)new ObdTagIntger(SPEED);
-	tags_array[THROTTLE] = (ObdTag*)new ObdTagIntger(THROTTLE);
-	tags_array[ENGINE_T] = (ObdTag*)new ObdTagFloat(ENGINE_T, 2);
-	tags_array[INTAKE_T] = (ObdTag*)new ObdTagFloat(INTAKE_T, 2);
-	tags_array[ATM_PRESSURE] = (ObdTag*)new ObdTagFloat(ATM_PRESSURE, 2);
-	tags_array[INTAKE_PRESSURE] = (ObdTag*)new ObdTagFloat(INTAKE_PRESSURE, 2);
-	tags_array[INJECTION] = (ObdTag*)new ObdTagFloat(INJECTION, 2);
-	tags_array[FUEL_CONS_H] = (ObdTag*)new ObdTagFloat(FUEL_CONS_H, 2);
-	tags_array[FUEL_TOTAL] = (ObdTag*)new ObdTagFloat(FUEL_TOTAL, 2);
+	tags_array[RPM] = new ObdTagIntger(RPM);
+	tags_array[SPEED] = new ObdTagIntger(SPEED);
+	tags_array[THROTTLE] = new ObdTagIntger(THROTTLE);
+	tags_array[ENGINE_T] = new ObdTagFloat(ENGINE_T, 2);
+	tags_array[INTAKE_T] = new ObdTagFloat(INTAKE_T, 2);
+	tags_array[ATM_PRESSURE] = new ObdTagFloat(ATM_PRESSURE, 2);
+	tags_array[INTAKE_PRESSURE] = new ObdTagFloat(INTAKE_PRESSURE, 2);
+	tags_array[INJECTION] = new ObdTagFloat(INJECTION, 2);
+	tags_array[FUEL_CONS_H] = new ObdTagFloat(FUEL_CONS_H, 2);
+	tags_array[FUEL_TOTAL] = new ObdTagFloat(FUEL_TOTAL, 2);
 
 	Timer* analog_reading_timer = new Timer(ANALOG_READING_TIMEOUT);
 	Timer* obd_waiting_timer = new Timer(OBD_WAITING_TIMEOUT);
 	Timer* obd_period_timer = new Timer(0);
 
 	OBD* ecu = new OBD();
+
 }
 
 void MODEL::calculateTags(unsigned char page, unsigned char buffer[])
