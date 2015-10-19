@@ -49,24 +49,21 @@ class ObdTag
 {
 public:
 	obdValsEnum val_type;
-	virtual char* toString();
 };
 
-class ObdTagIntger : public ObdTag
+class ObdTagInteger : public ObdTag
 {
 public:
 	uint16_t tag_value;
-	ObdTagIntger(obdValsEnum type);
-	char* toString();
+	ObdTagInteger(obdValsEnum type);
 };
 
 class ObdTagFloat : public  ObdTag
 {
 public:
 	double tag_value;
-	ObdTagFloat(obdValsEnum type, unsigned char dig);
-	char* toString();
 	unsigned char digits;
+	ObdTagFloat(obdValsEnum type, unsigned char dig);
 };
 
 
@@ -100,20 +97,17 @@ public:
 	void routine(void);
 
 	bool connection_established;
-
-	ObdTag* tags_array[TAGS_AMOUNT];
-
-
-	//ObdTagIntger* rpm;
-	//ObdTagIntger* speed;
-	//ObdTagIntger* throttle;
-	//ObdTagFloat* temp_engine;
-	//ObdTagFloat* temp_intake;
-	//ObdTagFloat* pressure_atm;
-	//ObdTagFloat* pressure_intake;
-	//ObdTagFloat* injection;
-	//ObdTagFloat consumption_h;
-	//ObdTagFloat fuel_total;
+	
+	ObdTagInteger* rpm;
+	ObdTagInteger* speed;
+	ObdTagInteger* throttle;
+	ObdTagFloat* temp_engine;
+	ObdTagFloat* temp_intake;
+	ObdTagFloat* pressure_atm;
+	ObdTagFloat* pressure_intake;
+	ObdTagFloat* injection;
+	ObdTagFloat* fuel_consumption_h;
+	ObdTagFloat* fuel_total;
 
 private:
 

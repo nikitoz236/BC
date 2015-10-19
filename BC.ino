@@ -63,8 +63,8 @@ void setup()
   
   while(1)
   {
-//	  comp->routine();
-//	  mylayout->update();
+	  comp->routine();
+	  mylayout->update();
   
     
     //if(millis() - analog_time > ANALOG_READING_TIMEOUT)

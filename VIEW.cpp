@@ -6,25 +6,12 @@
 
 
 
-DisplayObject::DisplayObject(ObdTag* tag)
-{
-	tag_ = tag;
-}
-
 unsigned char DisplayObject::getUnitsType(obdValsEnum type)
 {
 	return pgm_read_byte(&UnitsResolution[type]);
 }
 
-void DisplayObject::draw(void)
-{
-	lcd.setXY(position_x_text, position_y);
-	lcd.setFontSize(FONT_SIZE_MEDIUM);
-	lcd.setColor(0x5555);
-	lcd.print((__FlashStringHelper *)obdParametersNames[tag_->val_type]);
 
-	this->update();
-}
 
 void checkType(uint16_t a)
 {
@@ -36,14 +23,56 @@ void checkType(double a)
 	lcd.print("FLO");
 }
 
+DisplayObjectInteger::DisplayObjectInteger(ObdTagInteger* tag)
+{
+	tag_ = tag;
+}
 
+void DisplayObjectInteger::draw(void)
+{
+	lcd.setXY(position_x_text, position_y);
+	lcd.setFontSize(FONT_SIZE_MEDIUM);
+	lcd.setColor(0x5555);
+	lcd.print((__FlashStringHelper *)obdParametersNames[tag_->val_type]);
 
-void DisplayObject::update(void)
+	this->update();
+}
+
+void DisplayObjectInteger::update(void)
 {
 	lcd.setXY(position_x_value, position_y);
 	lcd.setColor(VGA_YELLOW);
 
-	lcd.print(tag_->toString());
+	lcd.print(tag_->tag_value, DEC);
+
+	lcd.print(" ");
+	lcd.print((__FlashStringHelper* ) obdParametersUnits[getUnitsType(tag_->val_type)]);
+	lcd.print("    ");
+}
+
+
+
+DisplayObjectFloat::DisplayObjectFloat(ObdTagFloat* tag)
+{
+	tag_ = tag;
+}
+
+void DisplayObjectFloat::draw(void)
+{
+	lcd.setXY(position_x_text, position_y);
+	lcd.setFontSize(FONT_SIZE_MEDIUM);
+	lcd.setColor(0x5555);
+	lcd.print((__FlashStringHelper *)obdParametersNames[tag_->val_type]);
+
+	this->update();
+}
+
+void DisplayObjectFloat::update(void)
+{
+	lcd.setXY(position_x_value, position_y);
+	lcd.setColor(VGA_YELLOW);
+
+	lcd.print(tag_->tag_value, tag_->digits);
 	
 	lcd.print(" ");
 	lcd.print((__FlashStringHelper *)obdParametersUnits[getUnitsType(tag_->val_type)]);
@@ -56,13 +85,13 @@ void DisplayObject::update(void)
 
 Layout::Layout(uint16_t position)
 {
-	layout_array[0] = new DisplayObject(comp->tags_array[RPM]);
-	layout_array[1] = new DisplayObject(comp->tags_array[SPEED]);
-	layout_array[2] = new DisplayObject(comp->tags_array[ENGINE_T]);
-	layout_array[3] = new DisplayObject(comp->tags_array[INTAKE_T]);
-	layout_array[4] = new DisplayObject(comp->tags_array[INJECTION]);
-	layout_array[5] = new DisplayObject(comp->tags_array[FUEL_CONS_H]);
-	layout_array[6] = new DisplayObject(comp->tags_array[FUEL_TOTAL]);
+	layout_array[0] = new DisplayObjectInteger(comp->rpm);
+	layout_array[1] = new DisplayObjectInteger(comp->speed);
+	layout_array[2] = new DisplayObjectFloat(comp->temp_engine);
+	layout_array[3] = new DisplayObjectFloat(comp->temp_intake);
+	layout_array[4] = new DisplayObjectFloat(comp->injection);
+	layout_array[5] = new DisplayObjectFloat(comp->fuel_consumption_h);
+	layout_array[6] = new DisplayObjectFloat(comp->fuel_total);
 
 	for (int i = 0; i < 7; i++)
 	{

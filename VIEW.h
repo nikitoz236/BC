@@ -62,12 +62,32 @@ public:
 	uint16_t position_x_text;
 	uint16_t position_x_value;
 	uint16_t position_y;
-	ObdTag* tag_;
-	DisplayObject(ObdTag* tag);
 	void draw(void);
 	void update(void);
 	unsigned char getUnitsType(obdValsEnum type);
 };
+
+class DisplayObjectInteger : public DisplayObject
+{
+public:
+	ObdTagInteger* tag_;
+	void draw(void);
+	void update(void);
+
+	DisplayObjectInteger(ObdTagInteger * tag);
+};
+
+class DisplayObjectFloat : public DisplayObject
+{
+public:
+	ObdTagFloat* tag_;
+	void draw(void);
+	void update(void);
+
+	DisplayObjectFloat(ObdTagFloat * tag);
+};
+
+
 
 class Layout
 {

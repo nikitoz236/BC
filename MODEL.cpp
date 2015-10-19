@@ -7,16 +7,17 @@
 
 MODEL::MODEL(void)
 {
-	tags_array[RPM] = new ObdTagIntger(RPM);
-	tags_array[SPEED] = new ObdTagIntger(SPEED);
-	tags_array[THROTTLE] = new ObdTagIntger(THROTTLE);
-	tags_array[ENGINE_T] = new ObdTagFloat(ENGINE_T, 2);
-	tags_array[INTAKE_T] = new ObdTagFloat(INTAKE_T, 2);
-	tags_array[ATM_PRESSURE] = new ObdTagFloat(ATM_PRESSURE, 2);
-	tags_array[INTAKE_PRESSURE] = new ObdTagFloat(INTAKE_PRESSURE, 2);
-	tags_array[INJECTION] = new ObdTagFloat(INJECTION, 2);
-	tags_array[FUEL_CONS_H] = new ObdTagFloat(FUEL_CONS_H, 2);
-	tags_array[FUEL_TOTAL] = new ObdTagFloat(FUEL_TOTAL, 2);
+	ObdTagInteger* rpm = new ObdTagInteger(RPM);
+	ObdTagInteger* speed = new ObdTagInteger(SPEED);
+	ObdTagInteger* throttle = new ObdTagInteger(THROTTLE);
+	ObdTagFloat* temp_engine = new ObdTagFloat(ENGINE_T, 2);
+	ObdTagFloat* temp_intake = new ObdTagFloat(INTAKE_T, 2);
+	ObdTagFloat* pressure_atm = new ObdTagFloat(ATM_PRESSURE, 2);
+	ObdTagFloat* pressure_intake = new ObdTagFloat(INTAKE_PRESSURE, 2);
+	ObdTagFloat* injection = new ObdTagFloat(INJECTION, 2);
+	ObdTagFloat* fuel_consumption_h = new ObdTagFloat(FUEL_CONS_H, 2);
+	ObdTagFloat* fuel_total = new ObdTagFloat(FUEL_TOTAL, 2);
+
 
 	Timer* analog_reading_timer = new Timer(ANALOG_READING_TIMEOUT);
 	Timer* obd_waiting_timer = new Timer(OBD_WAITING_TIMEOUT);
@@ -31,17 +32,17 @@ void MODEL::calculateTags(unsigned char page, unsigned char buffer[])
 	switch(page)
 	{
 	case 0 :
-		tags_array[RPM]->tag_value = (256 * buffer[0] + buffer[1]) / 4;
-		tags_array[SPEED]->tag_value = buffer[2];
+		rpm->tag_value = (256 * buffer[0] + buffer[1]) / 4;
+		speed->tag_value = buffer[2];
 		break;
 
 	case 1 :
-		tags_array[ENGINE_T]->tag_value = (double)temp_formula(buffer[0]);
-		tags_array[INTAKE_T]->tag_value = (double)temp_formula(buffer[1]);
+		temp_engine->tag_value = (double)temp_formula(buffer[0]);
+		temp_intake->tag_value = (double)temp_formula(buffer[1]);
 		break;
 
 	case 2 :
-		tags_array[INJECTION]->tag_value = (double)(256 * buffer[4] + buffer[5]) / 250;
+		injection->tag_value = (double)(256 * buffer[4] + buffer[5]) / 250;
 		break;
 
 	default:
@@ -52,8 +53,8 @@ void MODEL::calculateTags(unsigned char page, unsigned char buffer[])
 
 void MODEL::calculateOtherTags(void)
 {
-	tags_array[FUEL_CONS_H]->tag_value = tags_array[INJECTION]->tag_value * tags_array[RPM]->tag_value * INJECTOR_PERFOMANCE * 0.000002;
-	tags_array[ENGINE_T]->tag_value += tags_array[FUEL_CONS_H]->tag_value * obd_update_period / 3600000;
+	fuel_consumption_h->tag_value = injection->tag_value * rpm->tag_value * INJECTOR_PERFOMANCE * 0.000002;
+	fuel_total->tag_value += fuel_consumption_h->tag_value * obd_update_period / 3600000;
 }
 
 void MODEL::routine(void)
@@ -65,9 +66,9 @@ void MODEL::routine(void)
 
 	if (obd_waiting_timer->isOver())
 	{
-		tags_array[SPEED]->tag_value = 0;
-		tags_array[RPM]->tag_value = 0;
-		tags_array[INJECTION]->tag_value = 0;
+		speed->tag_value = 0;
+		rpm->tag_value = 0;
+		injection->tag_value = 0;
 
 		memory_offset = 0;
 		connection_established = false;
@@ -98,28 +99,17 @@ void MODEL::routine(void)
 //=========================================================================================================================
 
 
-ObdTagIntger::ObdTagIntger(obdValsEnum type)
+ObdTagInteger::ObdTagInteger(obdValsEnum type)
 {
 	val_type = type;
 	tag_value = 0;
 }
-
-char* ObdTagIntger::toString()
-{
-	return "INT";
-}
-
 
 ObdTagFloat::ObdTagFloat(obdValsEnum type, unsigned char dig)
 {
 	val_type = type;
 	digits = dig;
 	tag_value = 0; 	
-}
-
-char* ObdTagFloat::toString()
-{
-	return "FLO";
 }
 
 
