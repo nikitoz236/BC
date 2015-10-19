@@ -45,26 +45,30 @@ enum obdValsEnum
 
 
 
-class ObdTag
+//class ObdTag
+//{
+//public:
+//	obdValsEnum typeR;
+//};
+
+class ObdTagInteger
 {
 public:
-	obdValsEnum val_type;
+	uint16_t value;
+	obdValsEnum typeR;
+	ObdTagInteger(obdValsEnum arg);
 };
 
-class ObdTagInteger : public ObdTag
+class ObdTagFloat
 {
 public:
-	uint16_t tag_value;
-	ObdTagInteger(obdValsEnum type);
-};
-
-class ObdTagFloat : public  ObdTag
-{
-public:
-	double tag_value;
+	double value;
+	obdValsEnum typeR;
 	unsigned char digits;
-	ObdTagFloat(obdValsEnum type, unsigned char dig);
+	ObdTagFloat(obdValsEnum arg, unsigned char dig);
 };
+
+
 
 
 class Timer

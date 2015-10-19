@@ -20,7 +20,7 @@ extern MODEL* comp;
 const char obdParametersNames[][16] PROGMEM = {
 //     1234567890ABCDEF
 	{ "RPM" },
-	{ "SPEED          " },
+	{ "SPEED" },
 	{ "ENGINE t       " },
 	{ "INTAKE t       " },
 	{ "INTAKE PRESSURE" },
@@ -39,7 +39,7 @@ const unsigned char UnitsResolution[] PROGMEM = {
 
 
 const char obdParametersUnits[][8] PROGMEM = {
-	{ 0 },			// 0
+	{ " " },		// 0
 	{ "KM/H" },		// 1
 	{ "*C" },		// 2
 	{ "KPA" },		// 3
@@ -62,29 +62,29 @@ public:
 	uint16_t position_x_text;
 	uint16_t position_x_value;
 	uint16_t position_y;
-	void draw(void);
-	void update(void);
-	unsigned char getUnitsType(obdValsEnum type);
+	virtual void draw(void);
+	virtual void update(void);
+	unsigned char getUnitsType(obdValsEnum typeR);
 };
 
 class DisplayObjectInteger : public DisplayObject
 {
 public:
-	ObdTagInteger* tag_;
+	ObdTagInteger* tag;
 	void draw(void);
 	void update(void);
 
-	DisplayObjectInteger(ObdTagInteger * tag);
+	DisplayObjectInteger(ObdTagInteger* tag_);
 };
 
 class DisplayObjectFloat : public DisplayObject
 {
 public:
-	ObdTagFloat* tag_;
+	ObdTagFloat* tag;
 	void draw(void);
 	void update(void);
 
-	DisplayObjectFloat(ObdTagFloat * tag);
+	DisplayObjectFloat(ObdTagFloat* tag_);
 };
 
 

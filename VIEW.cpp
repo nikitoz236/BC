@@ -11,8 +11,6 @@ unsigned char DisplayObject::getUnitsType(obdValsEnum type)
 	return pgm_read_byte(&UnitsResolution[type]);
 }
 
-
-
 void checkType(uint16_t a)
 {
 	lcd.print("INT");
@@ -23,9 +21,9 @@ void checkType(double a)
 	lcd.print("FLO");
 }
 
-DisplayObjectInteger::DisplayObjectInteger(ObdTagInteger* tag)
+DisplayObjectInteger::DisplayObjectInteger(ObdTagInteger* tag_)
 {
-	tag_ = tag;
+	tag = tag_;
 }
 
 void DisplayObjectInteger::draw(void)
@@ -33,9 +31,10 @@ void DisplayObjectInteger::draw(void)
 	lcd.setXY(position_x_text, position_y);
 	lcd.setFontSize(FONT_SIZE_MEDIUM);
 	lcd.setColor(0x5555);
-	lcd.print((__FlashStringHelper *)obdParametersNames[tag_->val_type]);
+	lcd.print(tag->typeR);
+	//lcd.print((__FlashStringHelper *)obdParametersNames[tag->typeR]);
 
-	this->update();
+	update();
 }
 
 void DisplayObjectInteger::update(void)
@@ -43,18 +42,19 @@ void DisplayObjectInteger::update(void)
 	lcd.setXY(position_x_value, position_y);
 	lcd.setColor(VGA_YELLOW);
 
-	lcd.print(tag_->tag_value, DEC);
+//	lcd.print(tag->value, DEC);
+	checkType(tag->value);
 
 	lcd.print(" ");
-	lcd.print((__FlashStringHelper* ) obdParametersUnits[getUnitsType(tag_->val_type)]);
+	lcd.print((__FlashStringHelper *)obdParametersUnits[getUnitsType(tag->typeR)]);
 	lcd.print("    ");
 }
 
 
 
-DisplayObjectFloat::DisplayObjectFloat(ObdTagFloat* tag)
+DisplayObjectFloat::DisplayObjectFloat(ObdTagFloat* tag_)
 {
-	tag_ = tag;
+	tag = tag_;
 }
 
 void DisplayObjectFloat::draw(void)
@@ -62,7 +62,7 @@ void DisplayObjectFloat::draw(void)
 	lcd.setXY(position_x_text, position_y);
 	lcd.setFontSize(FONT_SIZE_MEDIUM);
 	lcd.setColor(0x5555);
-	lcd.print((__FlashStringHelper *)obdParametersNames[tag_->val_type]);
+	lcd.print((__FlashStringHelper *)obdParametersNames[tag->typeR]);
 
 	this->update();
 }
@@ -72,10 +72,11 @@ void DisplayObjectFloat::update(void)
 	lcd.setXY(position_x_value, position_y);
 	lcd.setColor(VGA_YELLOW);
 
-	lcd.print(tag_->tag_value, tag_->digits);
-	
+//	lcd.print(tag->value, tag->digits);
+	checkType(tag->value);
+
 	lcd.print(" ");
-	lcd.print((__FlashStringHelper *)obdParametersUnits[getUnitsType(tag_->val_type)]);
+	lcd.print((__FlashStringHelper *)obdParametersUnits[getUnitsType(tag->typeR)]);
 	lcd.print("    ");
 }
 
@@ -104,7 +105,7 @@ Layout::Layout(uint16_t position)
 
 void Layout::draw(void)
 {
-	for (int i = 0; i < 7; i++)
+	for (int i = 0; i < 1; i++)
 	{
 		layout_array[i]->draw();
 	}

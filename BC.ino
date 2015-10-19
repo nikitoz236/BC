@@ -25,10 +25,25 @@
 
 LCD_ILI9341 lcd;
 
-MODEL* comp = new MODEL();
-Layout* mylayout = new Layout(24);
+class test_
+{
+public:
+	ObdTagInteger* testtag2;
+	test_(void)
+	{
+		ObdTagInteger* testtag2 = new ObdTagInteger(SPEED);
+	}
+};
 
-//DisplayObject* obj = new DisplayObject(comp->tags_array[]);
+test_* abraaca = new test_();
+
+
+MODEL* comp = new MODEL();
+
+//Layout* mylayout = new Layout(24);
+
+ObdTagInteger* testtag = new ObdTagInteger(SPEED);
+DisplayObjectInteger* di = new DisplayObjectInteger(comp->speed);
 
 unsigned char a;
 
@@ -52,7 +67,17 @@ void setup()
   
   lcd.setXY(0, 0);
   lcd.print("HONDA NEW MODEL COMPUTER");
-  mylayout->draw();
+
+  di->position_x_text = 12;
+  di->position_x_value = 160;
+  di->position_y = 24;
+  di->draw();
+
+
+  Serial.print("SPPED value:");
+  Serial.print(comp->speed->typeR, DEC);
+
+//  mylayout->draw();
 
 
 //  lcd.setXY(0, 24);
@@ -63,8 +88,8 @@ void setup()
   
   while(1)
   {
-	  comp->routine();
-	  mylayout->update();
+//	  comp->routine();
+//	  mylayout->update();
   
     
     //if(millis() - analog_time > ANALOG_READING_TIMEOUT)

@@ -18,31 +18,31 @@ MODEL::MODEL(void)
 	ObdTagFloat* fuel_consumption_h = new ObdTagFloat(FUEL_CONS_H, 2);
 	ObdTagFloat* fuel_total = new ObdTagFloat(FUEL_TOTAL, 2);
 
-
 	Timer* analog_reading_timer = new Timer(ANALOG_READING_TIMEOUT);
 	Timer* obd_waiting_timer = new Timer(OBD_WAITING_TIMEOUT);
 	Timer* obd_period_timer = new Timer(0);
 
 	OBD* ecu = new OBD();
-
 }
+
+
 
 void MODEL::calculateTags(unsigned char page, unsigned char buffer[])
 {
 	switch(page)
 	{
 	case 0 :
-		rpm->tag_value = (256 * buffer[0] + buffer[1]) / 4;
-		speed->tag_value = buffer[2];
+		rpm->value = (256 * buffer[0] + buffer[1]) / 4;
+		speed->value = buffer[2];
 		break;
 
 	case 1 :
-		temp_engine->tag_value = (double)temp_formula(buffer[0]);
-		temp_intake->tag_value = (double)temp_formula(buffer[1]);
+		temp_engine->value = (double)temp_formula(buffer[0]);
+		temp_intake->value = (double)temp_formula(buffer[1]);
 		break;
 
 	case 2 :
-		injection->tag_value = (double)(256 * buffer[4] + buffer[5]) / 250;
+		injection->value = (double)(256 * buffer[4] + buffer[5]) / 250;
 		break;
 
 	default:
@@ -53,8 +53,8 @@ void MODEL::calculateTags(unsigned char page, unsigned char buffer[])
 
 void MODEL::calculateOtherTags(void)
 {
-	fuel_consumption_h->tag_value = injection->tag_value * rpm->tag_value * INJECTOR_PERFOMANCE * 0.000002;
-	fuel_total->tag_value += fuel_consumption_h->tag_value * obd_update_period / 3600000;
+	fuel_consumption_h->value = injection->value * rpm->value * INJECTOR_PERFOMANCE * 0.000002;
+	fuel_total->value += fuel_consumption_h->value * obd_update_period / 3600000;
 }
 
 void MODEL::routine(void)
@@ -66,9 +66,9 @@ void MODEL::routine(void)
 
 	if (obd_waiting_timer->isOver())
 	{
-		speed->tag_value = 0;
-		rpm->tag_value = 0;
-		injection->tag_value = 0;
+		speed->value = 0;
+		rpm->value = 0;
+		injection->value = 0;
 
 		memory_offset = 0;
 		connection_established = false;
@@ -99,17 +99,19 @@ void MODEL::routine(void)
 //=========================================================================================================================
 
 
-ObdTagInteger::ObdTagInteger(obdValsEnum type)
+
+
+ObdTagInteger::ObdTagInteger(obdValsEnum arg)
 {
-	val_type = type;
-	tag_value = 0;
+	typeR = arg;
+	value = 0;
 }
 
-ObdTagFloat::ObdTagFloat(obdValsEnum type, unsigned char dig)
+ObdTagFloat::ObdTagFloat(obdValsEnum arg, unsigned char dig)
 {
-	val_type = type;
+	typeR = arg;
 	digits = dig;
-	tag_value = 0; 	
+	value = 0;
 }
 
 
