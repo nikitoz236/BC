@@ -102,8 +102,11 @@ ObdTagIntger::ObdTagIntger(obdValsEnum type)
 {
 	val_type = type;
 	tag_value = 0;
-	isFloat = 0;
-	digits = -1;
+}
+
+char* ObdTagIntger::toString()
+{
+	return "INT";
 }
 
 
@@ -111,8 +114,12 @@ ObdTagFloat::ObdTagFloat(obdValsEnum type, unsigned char dig)
 {
 	val_type = type;
 	digits = dig;
-	tag_value = 0; 
-	isFloat = 1;
+	tag_value = 0; 	
+}
+
+char* ObdTagFloat::toString()
+{
+	return "FLO";
 }
 
 

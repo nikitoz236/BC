@@ -42,10 +42,9 @@ void DisplayObject::update(void)
 {
 	lcd.setXY(position_x_value, position_y);
 	lcd.setColor(VGA_YELLOW);
-//	if(tag_->isFloat) lcd.print((double)tag_->tag_value, tag_->digits);
-//	else lcd.print((unsigned int)tag_->tag_value, DEC);
 
-	checkType(tag_->tag_value);
+	lcd.print(tag_->toString());
+	
 	lcd.print(" ");
 	lcd.print((__FlashStringHelper *)obdParametersUnits[getUnitsType(tag_->val_type)]);
 	lcd.print("    ");

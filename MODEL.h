@@ -48,10 +48,8 @@ enum obdValsEnum
 class ObdTag
 {
 public:
-	obdValsEnum val_type;	
-	bool isFloat;
-	uint16_t tag_value;
-	unsigned char digits;
+	obdValsEnum val_type;
+	virtual char* toString();
 };
 
 class ObdTagIntger : public ObdTag
@@ -59,14 +57,16 @@ class ObdTagIntger : public ObdTag
 public:
 	uint16_t tag_value;
 	ObdTagIntger(obdValsEnum type);
+	char* toString();
 };
 
 class ObdTagFloat : public  ObdTag
 {
 public:
-
 	double tag_value;
 	ObdTagFloat(obdValsEnum type, unsigned char dig);
+	char* toString();
+	unsigned char digits;
 };
 
 
