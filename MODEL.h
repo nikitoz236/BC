@@ -11,13 +11,14 @@
 
 #include "OBD.h"
 
+
 #define temp_formula(a) (double)(155.04149 - (a*3.0414878) + (a*a*0.03952185) - (a*a*a*0.00029383913) + (a*a*a*a*0.0000010792568) - (a*a*a*a*a*0.0000000015618437))
 
 
 #define INJECTOR_PERFOMANCE		235
 
 
-#define OBD_WAITING_TIMEOUT				1000
+#define OBD_WAITING_TIMEOUT				2000
 #define ANALOG_READING_TIMEOUT			500
 
 
@@ -25,22 +26,26 @@
 #define analog_voltage_pin A6
 #define analog_tank_pin A7
 
-#define TAGS_AMOUNT FUEL_TOTAL + 1
+
+
+#define log(a, b)   Serial.print(a);	\
+					Serial.print(b, DEC)
+
 
 enum obdValsEnum
 {
-	RPM,
-	SPEED,
-	ENGINE_T,
-	INTAKE_T,
-	INTAKE_PRESSURE,
-	ATM_PRESSURE,
-	THROTTLE,
-	OXY,
-	INJECTION,
-	FUEL_CONS_H,
-	FUEL_CONS_KM,
-	FUEL_TOTAL
+	RPM = 0,
+	SPEED = 1,
+	ENGINE_T = 2,
+	INTAKE_T = 3,
+	INTAKE_PRESSURE = 4,
+	ATM_PRESSURE = 5,
+	THROTTLE = 6,
+	OXY = 7,
+	INJECTION = 8,
+	FUEL_CONS_H = 9,
+	FUEL_CONS_KM = 10,
+	FUEL_TOTAL = 11
 };
 
 
@@ -48,24 +53,24 @@ enum obdValsEnum
 //class ObdTag
 //{
 //public:
-//	obdValsEnum typeR;
+//	obdValsEnum type;
 //};
 
 class ObdTagInteger
 {
 public:
 	uint16_t value;
-	obdValsEnum typeR;
-	ObdTagInteger(obdValsEnum arg);
+	unsigned char type;
+	ObdTagInteger(unsigned char arg);
 };
 
 class ObdTagFloat
 {
 public:
 	double value;
-	obdValsEnum typeR;
+	unsigned char type;
 	unsigned char digits;
-	ObdTagFloat(obdValsEnum arg, unsigned char dig);
+	ObdTagFloat(unsigned char arg, unsigned char dig);
 };
 
 
@@ -101,7 +106,8 @@ public:
 	void routine(void);
 
 	bool connection_established;
-	
+	bool frame_recieved;
+
 	ObdTagInteger* rpm;
 	ObdTagInteger* speed;
 	ObdTagInteger* throttle;
@@ -111,6 +117,8 @@ public:
 	ObdTagFloat* pressure_intake;
 	ObdTagFloat* injection;
 	ObdTagFloat* fuel_consumption_h;
+	ObdTagFloat* fuel_consumption_km;
+	ObdTagFloat* fuel_consumption;
 	ObdTagFloat* fuel_total;
 
 private:

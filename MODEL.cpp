@@ -3,26 +3,34 @@
 // 
 
 #include "MODEL.h"
+#include "screens.h"
 
 
 MODEL::MODEL(void)
 {
-	ObdTagInteger* rpm = new ObdTagInteger(RPM);
-	ObdTagInteger* speed = new ObdTagInteger(SPEED);
-	ObdTagInteger* throttle = new ObdTagInteger(THROTTLE);
-	ObdTagFloat* temp_engine = new ObdTagFloat(ENGINE_T, 2);
-	ObdTagFloat* temp_intake = new ObdTagFloat(INTAKE_T, 2);
-	ObdTagFloat* pressure_atm = new ObdTagFloat(ATM_PRESSURE, 2);
-	ObdTagFloat* pressure_intake = new ObdTagFloat(INTAKE_PRESSURE, 2);
-	ObdTagFloat* injection = new ObdTagFloat(INJECTION, 2);
-	ObdTagFloat* fuel_consumption_h = new ObdTagFloat(FUEL_CONS_H, 2);
-	ObdTagFloat* fuel_total = new ObdTagFloat(FUEL_TOTAL, 2);
+	rpm = new ObdTagInteger(RPM);
+	speed = new ObdTagInteger(SPEED);
+	throttle = new ObdTagInteger(THROTTLE);
+	temp_engine = new ObdTagFloat(ENGINE_T, 2);
+	temp_intake = new ObdTagFloat(INTAKE_T, 2);
+	pressure_atm = new ObdTagFloat(ATM_PRESSURE, 2);
+	pressure_intake = new ObdTagFloat(INTAKE_PRESSURE, 2);
+	injection = new ObdTagFloat(INJECTION, 2);
+	fuel_consumption_h = new ObdTagFloat(FUEL_CONS_H, 2);
+	fuel_consumption_km = new ObdTagFloat(FUEL_CONS_KM, 2);
+	fuel_consumption = fuel_consumption_h;
+	fuel_total = new ObdTagFloat(FUEL_TOTAL, 2);
 
-	Timer* analog_reading_timer = new Timer(ANALOG_READING_TIMEOUT);
-	Timer* obd_waiting_timer = new Timer(OBD_WAITING_TIMEOUT);
-	Timer* obd_period_timer = new Timer(0);
+	connection_established = false;
+	frame_recieved = false;
 
-	OBD* ecu = new OBD();
+	obd_update_period = 0;
+
+	analog_reading_timer = new Timer(ANALOG_READING_TIMEOUT);
+	obd_waiting_timer = new Timer(OBD_WAITING_TIMEOUT);
+	obd_period_timer = new Timer(0);
+
+	ecu = new OBD();
 }
 
 
@@ -53,37 +61,62 @@ void MODEL::calculateTags(unsigned char page, unsigned char buffer[])
 
 void MODEL::calculateOtherTags(void)
 {
+//	fuel_consumption_h->value = 15;
 	fuel_consumption_h->value = injection->value * rpm->value * INJECTOR_PERFOMANCE * 0.000002;
 	fuel_total->value += fuel_consumption_h->value * obd_update_period / 3600000;
+
+	if (speed->value)
+	{
+		fuel_consumption_km->value = (fuel_consumption_h->value / speed->value) * 100;
+		fuel_consumption->value = fuel_consumption_km->value;
+		fuel_consumption->type = FUEL_CONS_KM;
+	}
+	else
+	{
+		fuel_consumption->value = fuel_consumption_h->value;
+		fuel_consumption->type = FUEL_CONS_H;
+	}
+
 }
+
 
 void MODEL::routine(void)
 {
-	if(analog_reading_timer->isOver())
+	if (analog_reading_timer->isOver())
 	{
+		draw_analogs();
+		analog_reading_timer->reset();
+		//if (speed->value) speed->value = 0;
+		//else speed->value = 45;
+		//calculateothertags();
 
 	}
 
 	if (obd_waiting_timer->isOver())
 	{
+//		Serial.print("\n\rtimeout");
 		speed->value = 0;
 		rpm->value = 0;
 		injection->value = 0;
 
 		memory_offset = 0;
 		connection_established = false;
-		obd_waiting_timer->reset();
+		frame_recieved = false;
+		obd_update_period = 0;
 		ecu->readMemoryRequest(memory_offset, 16);
+		obd_waiting_timer->reset();
 	}
 
 	if (ecu->available())
 	{
+//		Serial.print("\n\rmessage");
 		connection_established = true;
 		calculateTags(memory_offset, ecu->obd_buffer);
 		memory_offset++;
 		if (memory_offset > 16)
 		{
 			memory_offset = 0;
+			frame_recieved = true;
 			obd_update_period = obd_period_timer->getTime();
 			obd_period_timer->reset();
 			calculateOtherTags();
@@ -91,6 +124,14 @@ void MODEL::routine(void)
 		ecu->readMemoryRequest(memory_offset, 16);
 		obd_waiting_timer->reset();
 	}
+
+	if (millis() < 1000)
+	{
+		obd_period_timer->reset();
+		analog_reading_timer->reset();
+		obd_waiting_timer->reset();
+	}
+
 
 	ecu->routine();
 }
@@ -101,15 +142,15 @@ void MODEL::routine(void)
 
 
 
-ObdTagInteger::ObdTagInteger(obdValsEnum arg)
+ObdTagInteger::ObdTagInteger(unsigned char arg)
 {
-	typeR = arg;
+	type = arg;
 	value = 0;
 }
 
-ObdTagFloat::ObdTagFloat(obdValsEnum arg, unsigned char dig)
+ObdTagFloat::ObdTagFloat(unsigned char arg, unsigned char dig)
 {
-	typeR = arg;
+	type = arg;
 	digits = dig;
 	value = 0;
 }

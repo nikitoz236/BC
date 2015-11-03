@@ -19,21 +19,22 @@ extern MODEL* comp;
 
 const char obdParametersNames[][16] PROGMEM = {
 //     1234567890ABCDEF
-	{ "RPM" },
-	{ "SPEED" },
-	{ "ENGINE t       " },
-	{ "INTAKE t       " },
-	{ "INTAKE PRESSURE" },
-	{ "ATM PRESSURE   " },
-	{ "THROTTLE       " },
-	{ "OXY            " },
-	{ "INJECTION      " },
-	{ "FUEL CONS.     " },
-	{ "FUEL CONS.     " },
-	{ "FUEL TOTAL     " }
+	{ "RPM" },						//0
+	{ "SPEED" },					//1
+	{ "ENGINE t" },					//2
+	{ "INTAKE t" },					//3
+	{ "INTAKE PRESSURE" },			//4
+	{ "ATM PRESSURE" },				//5
+	{ "THROTTLE" },					//6
+	{ "OXY" },						//7
+	{ "INJECTION" },				//8
+	{ "FUEL CONS." },				//9
+	{ "FUEL CONS." },				//10
+	{ "FUEL TOTAL" }				//11
 };
 
 const unsigned char UnitsResolution[] PROGMEM = {
+//	0  1  2  3  4  5  6  7  8  9 10 11
 	0, 1, 2, 2, 3, 3, 4, 5, 6, 7, 8, 9
 };
 
@@ -46,12 +47,10 @@ const char obdParametersUnits[][8] PROGMEM = {
 	{ "%" },		// 4
 	{ "OXY" },		// 5
 	{ "MS" },		// 6
-	{ "L/100" },	// 7
-	{ "L/H " },		// 8
+	{ "L/H " },		// 7
+	{ "L/100" },	// 8
 	{ "L" },		// 9
 };
-
-
 
 
 
@@ -64,7 +63,7 @@ public:
 	uint16_t position_y;
 	virtual void draw(void);
 	virtual void update(void);
-	unsigned char getUnitsType(obdValsEnum typeR);
+	unsigned char getUnitsType(unsigned char type);
 };
 
 class DisplayObjectInteger : public DisplayObject

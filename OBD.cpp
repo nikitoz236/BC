@@ -1,4 +1,3 @@
-
 #include "OBD.h"
 
 void OBD::routine(void)
@@ -9,7 +8,7 @@ void OBD::routine(void)
     unsigned char c = obd_read();
     obd_rx_cs += c;
     obd_state++;
-//    obd_send(obd_state);
+ //   Serial.print(obd_state, DEC);
     switch(obd_state)
     {
       case 1:
@@ -29,7 +28,7 @@ void OBD::routine(void)
 
       default:
         obd_buffer[obd_state - obd_data_begin] = c;
-        if((obd_state == obd_rx_length - 1) || (obd_state == 0x12)) obd_state = 100;
+        if((obd_state == (obd_rx_length - 1)) || (obd_state == 0x12)) obd_state = 100;
         break;        
     }
   }
@@ -53,6 +52,9 @@ void OBD::readMemoryRequest(unsigned char offset, unsigned char amount)
   obd_errors = 0;
   obd_state = 0;
   obd_amount = amount;
+
+
+//  Serial.print("\n\rrequest");
 }
 
 bool OBD::available(void)

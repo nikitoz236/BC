@@ -7,9 +7,6 @@
 //$00$13$EE$10$10$10$CC$1F$1F$1F$1F$1F$1F$1F$1F$1F$1F$1F$34
 //$00$13$AA$AA$55$55$55$55$55$55$55$55$55$55$55$55$55$55$12
 
-#include "MODEL.h"
-#include "VIEW.h"
-
 #include <Arduino.h>
 #include <SPI.h>
 #include <MultiLCD.h>
@@ -17,93 +14,63 @@
 //#include <avr/interrupt.h>
 //#include "console.h"
 //#include "OBD.h"
-//#include "screens.h"
 #include "buttons.h"
-
-
+#include "MODEL.h"
+#include "VIEW.h"
+#include "screens.h"
 
 
 LCD_ILI9341 lcd;
 
-class test_
-{
-public:
-	ObdTagInteger* testtag2;
-	test_(void)
-	{
-		ObdTagInteger* testtag2 = new ObdTagInteger(SPEED);
-	}
-};
-
-test_* abraaca = new test_();
 
 
-MODEL* comp = new MODEL();
 
-//Layout* mylayout = new Layout(24);
-
-ObdTagInteger* testtag = new ObdTagInteger(SPEED);
-DisplayObjectInteger* di = new DisplayObjectInteger(comp->speed);
+MODEL* comp;
+Layout* mylayout;
 
 unsigned char a;
 
 
 void setup()
 {
-
   Serial.begin(9600);
-
+  
   PORTD |= 0xF0;
   PORTB |= 0x03;
   PORTC |= 0x01;
 
   analogReference(DEFAULT);
 
-
-
   lcd.setBackLight(0);
   lcd.begin();
   lcd.clear();
   
+
+
+  comp = new MODEL();
+  mylayout = new Layout(32);
+
+
   lcd.setXY(0, 0);
-  lcd.print("HONDA NEW MODEL COMPUTER");
+  lcd.setColor(VGA_GREEN);
+  lcd.print("HONDA B16 Engine OBD computer");
+  mylayout->draw();
 
-  di->position_x_text = 12;
-  di->position_x_value = 160;
-  di->position_y = 24;
-  di->draw();
+  prepare_analogs();
 
-
-  Serial.print("SPPED value:");
-  Serial.print(comp->speed->typeR, DEC);
-
-//  mylayout->draw();
-
-
-//  lcd.setXY(0, 24);
-//  lcd.print(obdParametersNames[3]);
 
 	  
 
   
   while(1)
   {
-//	  comp->routine();
-//	  mylayout->update();
-  
-    
-    //if(millis() - analog_time > ANALOG_READING_TIMEOUT)
-    //{
-    //  draw_analogs();
-    //  analog_time = millis();
-    //  
-    //}
-    
-    //if(millis() < 1000)
-    //{
-    //  obd_time = 0;
-    //  analog_time = 0;
-    //}    
+	  comp->routine();
+	  if (comp->frame_recieved)
+	  {
+		  mylayout->update();
+		  update_period(comp->obd_update_period);
+		  comp->frame_recieved = false;
+	  }
   }
 }
 
