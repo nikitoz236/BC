@@ -1,5 +1,34 @@
 #include "OBD.h"
 
+#include "obdtestmap.h"
+
+
+
+
+//#define TEST_OBD
+
+
+#if defined(TEST_OBD)
+
+void OBD::routine(void)
+{
+}
+
+
+void OBD::readMemoryRequest(unsigned char offset, unsigned char amount)
+{
+	for (int i = 0; i < amount; i++)
+	{
+		obd_buffer[i] = pgm_read_byte(&obdTestMap[offset + i]);
+	}
+	obd_errors = 0;
+	obd_new_frame = 1;
+}
+
+
+
+#else
+
 void OBD::routine(void)
 {
   
@@ -56,6 +85,9 @@ void OBD::readMemoryRequest(unsigned char offset, unsigned char amount)
 
 //  Serial.print("\n\rrequest");
 }
+
+
+#endif
 
 bool OBD::available(void)
 {

@@ -34,6 +34,12 @@ MODEL::MODEL(void)
 }
 
 
+double MODEL::temp_formula(double x)
+{
+	double result = 155.04149 - x*3.0414878 + x*x*0.03952185 - x*x*x*0.00029383913 + x*x*x*x*0.0000010792568 - x*x*x*x*x*0.0000000015618437;
+	return result;
+}
+
 
 void MODEL::calculateTags(unsigned char page, unsigned char buffer[])
 {
@@ -45,8 +51,8 @@ void MODEL::calculateTags(unsigned char page, unsigned char buffer[])
 		break;
 
 	case 1 :
-		temp_engine->value = (double)temp_formula(buffer[0]);
-		temp_intake->value = (double)temp_formula(buffer[1]);
+		temp_engine->value = temp_formula(buffer[0]);
+		temp_intake->value = temp_formula(buffer[1]);
 		break;
 
 	case 2 :
@@ -121,7 +127,7 @@ void MODEL::routine(void)
 			obd_period_timer->reset();
 			calculateOtherTags();
 		}
-		ecu->readMemoryRequest(memory_offset, 16);
+		ecu->readMemoryRequest(16 * memory_offset, 16);
 		obd_waiting_timer->reset();
 	}
 

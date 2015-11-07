@@ -12,8 +12,6 @@
 #include "OBD.h"
 
 
-#define temp_formula(a) (double)(155.04149 - (a*3.0414878) + (a*a*0.03952185) - (a*a*a*0.00029383913) + (a*a*a*a*0.0000010792568) - (a*a*a*a*a*0.0000000015618437))
-
 
 #define INJECTOR_PERFOMANCE		235
 
@@ -101,6 +99,7 @@ public:
 
 
 	MODEL(void);
+	double temp_formula(double x);
 	void calculateTags(unsigned char page, unsigned char buffer[]);
 	void calculateOtherTags(void);
 	void routine(void);
