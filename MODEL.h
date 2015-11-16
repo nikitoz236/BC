@@ -24,6 +24,10 @@
 #define analog_voltage_pin A6
 #define analog_tank_pin A7
 
+#define V_REF 2.95
+#define voltage_scale_factor 6.138
+
+#define voltage_scale(a) ((V_REF / 1024) * a * voltage_scale_factor)
 
 
 #define log(a, b)   Serial.print(a);	\
@@ -32,18 +36,31 @@
 
 enum obdValsEnum
 {
-	RPM = 0,
-	SPEED = 1,
-	ENGINE_T = 2,
-	INTAKE_T = 3,
-	INTAKE_PRESSURE = 4,
-	ATM_PRESSURE = 5,
-	THROTTLE = 6,
-	OXY = 7,
-	INJECTION = 8,
-	FUEL_CONS_H = 9,
-	FUEL_CONS_KM = 10,
-	FUEL_TOTAL = 11
+	RPM,
+	SPEED,
+	ENGINE_T,
+	INTAKE_T,
+	INTAKE_PRESSURE,
+	ATM_PRESSURE,
+	THROTTLE,
+	OXY,
+	INJECTION,
+	FUEL_CONS_H,
+	FUEL_CONS_KM,
+	FUEL_TOTAL,
+	FUEL_AVERAGE,
+	ALTERNATOR_LOAD,
+	ENGINE_LOAD,
+	CORRECTION_SHORT,
+	CORRECTION_LONG,
+	IDLING_VALVE,
+	CURRENT,
+	VOLTAGE_OBD,
+	VOLTAGE_ADC,
+	TANK,
+	OBD_PERIOD
+
+
 };
 
 
@@ -71,7 +88,13 @@ public:
 	ObdTagFloat(unsigned char arg, unsigned char dig);
 };
 
-
+class ObdTagBin
+{
+public:
+	bool value;
+	unsigned char type;
+	ObdTagBin(unsigned char arg);
+};
 
 
 class Timer
@@ -101,11 +124,12 @@ public:
 	MODEL(void);
 	double temp_formula(double x);
 	void calculateTags(unsigned char page, unsigned char buffer[]);
+	void calculateAnalogTags(void);
 	void calculateOtherTags(void);
 	void routine(void);
 
 	bool connection_established;
-	bool frame_recieved;
+	bool need_update;
 
 	ObdTagInteger* rpm;
 	ObdTagInteger* speed;
@@ -119,6 +143,18 @@ public:
 	ObdTagFloat* fuel_consumption_km;
 	ObdTagFloat* fuel_consumption;
 	ObdTagFloat* fuel_total;
+	ObdTagFloat* fuel_average;
+	ObdTagFloat* alternator_load;
+	ObdTagInteger* engine_load;
+	ObdTagInteger* correction_short;
+	ObdTagInteger* correction_long;
+	ObdTagInteger* idling_valve;
+	ObdTagFloat* current;
+	ObdTagFloat* voltage_obd;
+	ObdTagFloat* voltage_adc;
+	ObdTagFloat* tank;
+	ObdTagInteger* obd_period;
+
 
 private:
 

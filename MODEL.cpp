@@ -20,9 +20,21 @@ MODEL::MODEL(void)
 	fuel_consumption_km = new ObdTagFloat(FUEL_CONS_KM, 2);
 	fuel_consumption = fuel_consumption_h;
 	fuel_total = new ObdTagFloat(FUEL_TOTAL, 2);
+	fuel_average = new ObdTagFloat(FUEL_AVERAGE, 2);
+	alternator_load = new ObdTagFloat(ALTERNATOR_LOAD, 2);
+	engine_load = new ObdTagInteger(ENGINE_LOAD);
+	correction_short = new ObdTagInteger(CORRECTION_SHORT);
+	correction_long = new ObdTagInteger(CORRECTION_LONG);
+	idling_valve = new ObdTagInteger(IDLING_VALVE);
+	current = new ObdTagFloat(CURRENT, 2);
+	voltage_obd = new ObdTagFloat(VOLTAGE_OBD, 2);
+	voltage_adc = new ObdTagFloat(VOLTAGE_ADC, 2);
+	tank = new ObdTagFloat(TANK, 2);
+	obd_period = new ObdTagInteger(OBD_PERIOD);
+
 
 	connection_established = false;
-	frame_recieved = false;
+	need_update = false;
 
 	obd_update_period = 0;
 
@@ -53,10 +65,24 @@ void MODEL::calculateTags(unsigned char page, unsigned char buffer[])
 	case 1 :
 		temp_engine->value = temp_formula(buffer[0]);
 		temp_intake->value = temp_formula(buffer[1]);
+		pressure_intake->value = (buffer[2] * 0.716) - 5;
+		pressure_atm->value = (buffer[3] * 0.716) - 5;
+		throttle->value = (buffer[4] - 24) / 2;
+		voltage_obd->value = buffer[7] / 10.45;
+		alternator_load->value = buffer[8] / 2.55;
+		current->value = 77.06 - (buffer[9] / 2.5371);
+
 		break;
 
 	case 2 :
+		correction_short->value = (double)((buffer[0] / 128 - 1) * 100);
+		correction_long->value = (double)((buffer[2] / 128 - 1) * 100);
 		injection->value = (double)(256 * buffer[4] + buffer[5]) / 250;
+		idling_valve->value = buffer[8] / 2.55;
+		break;
+
+	case 9 :
+		engine_load->value = buffer[0xC] / 2.55;
 		break;
 
 	default:
@@ -64,6 +90,13 @@ void MODEL::calculateTags(unsigned char page, unsigned char buffer[])
 	}
 
 }
+
+void MODEL::calculateAnalogTags(void)
+{
+	voltage_adc->value = voltage_scale(analogRead(analog_voltage_pin));
+	tank->value = tank->value * 0.8 + (analogRead(analog_tank_pin)) * 0.2;
+}
+
 
 void MODEL::calculateOtherTags(void)
 {
@@ -76,6 +109,8 @@ void MODEL::calculateOtherTags(void)
 		fuel_consumption_km->value = (fuel_consumption_h->value / speed->value) * 100;
 		fuel_consumption->value = fuel_consumption_km->value;
 		fuel_consumption->type = FUEL_CONS_KM;
+
+		fuel_average->value = fuel_average->value * 0.95 + fuel_consumption_km->value * 0.05;
 	}
 	else
 	{
@@ -90,12 +125,9 @@ void MODEL::routine(void)
 {
 	if (analog_reading_timer->isOver())
 	{
-		draw_analogs();
+		calculateAnalogTags();
+		need_update = true;
 		analog_reading_timer->reset();
-		//if (speed->value) speed->value = 0;
-		//else speed->value = 45;
-		//calculateothertags();
-
 	}
 
 	if (obd_waiting_timer->isOver())
@@ -107,10 +139,11 @@ void MODEL::routine(void)
 
 		memory_offset = 0;
 		connection_established = false;
-		frame_recieved = false;
+		need_update = false;
 		obd_update_period = 0;
-		ecu->readMemoryRequest(memory_offset, 16);
+		ecu->readMemoryRequest(16 * memory_offset, 16);
 		obd_waiting_timer->reset();
+		obd_period_timer->reset();
 	}
 
 	if (ecu->available())
@@ -122,8 +155,8 @@ void MODEL::routine(void)
 		if (memory_offset > 16)
 		{
 			memory_offset = 0;
-			frame_recieved = true;
-			obd_update_period = obd_period_timer->getTime();
+			need_update = true;
+			obd_period->value = obd_period_timer->getTime();
 			obd_period_timer->reset();
 			calculateOtherTags();
 		}
@@ -147,7 +180,6 @@ void MODEL::routine(void)
 
 
 
-
 ObdTagInteger::ObdTagInteger(unsigned char arg)
 {
 	type = arg;
@@ -158,6 +190,12 @@ ObdTagFloat::ObdTagFloat(unsigned char arg, unsigned char dig)
 {
 	type = arg;
 	digits = dig;
+	value = 0;
+}
+
+ObdTagBin::ObdTagBin(unsigned char arg)
+{
+	type = arg;
 	value = 0;
 }
 

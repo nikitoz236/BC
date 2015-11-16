@@ -5,7 +5,6 @@
 
 
 
-//#define TEST_OBD
 
 
 #if defined(TEST_OBD)

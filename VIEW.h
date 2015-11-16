@@ -12,6 +12,9 @@
 	#include "WProgram.h"
 #endif
 
+
+#include "buttons.h"
+
 extern LCD_ILI9341 lcd;
 extern MODEL* comp;
 
@@ -23,19 +26,30 @@ const char obdParametersNames[][16] PROGMEM = {
 	{ "SPEED" },					//1
 	{ "ENGINE t" },					//2
 	{ "INTAKE t" },					//3
-	{ "INTAKE PRESSURE" },			//4
-	{ "ATM PRESSURE" },				//5
+	{ "INTAKE PRESS." },			//4
+	{ "ATM PRESS." },				//5
 	{ "THROTTLE" },					//6
 	{ "OXY" },						//7
 	{ "INJECTION" },				//8
 	{ "FUEL CONS." },				//9
 	{ "FUEL CONS." },				//10
-	{ "FUEL TOTAL" }				//11
+	{ "FUEL TOTAL" },				//11
+	{ "FUEL AVERAGE" },				//12
+	{ "ALTERNATOR LOAD" },			//13
+	{ "ENGINE LOAD" },				//14
+	{ "CORR. SHORT" },				//15
+	{ "CORR. LONG" },				//16
+	{ "IDLING VALVE" },				//17
+	{ "CURRENT" },					//18
+	{ "VOLTAGE OBD" },				//19
+	{ "VOLTAGE ADC" },				//20
+	{ "TANK" },						//21
+	{ "OBD PERIOD" }				//22
 };
 
 const unsigned char UnitsResolution[] PROGMEM = {
-//	0  1  2  3  4  5  6  7  8  9 10 11
-	0, 1, 2, 2, 3, 3, 4, 5, 6, 7, 8, 9
+//	0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17  18  19  20 21 22 
+	0, 1, 2, 2, 3, 3, 4, 5, 6, 7, 8, 9, 8, 4, 4, 4, 4, 4, 10, 11, 11, 0, 6
 };
 
 
@@ -50,6 +64,8 @@ const char obdParametersUnits[][8] PROGMEM = {
 	{ "L/H " },		// 7
 	{ "L/100" },	// 8
 	{ "L" },		// 9
+	{ "A" },		// 10
+	{ "V" }			// 11
 };
 
 
@@ -86,16 +102,42 @@ public:
 	DisplayObjectFloat(ObdTagFloat* tag_);
 };
 
-
-
-class Layout
+class DisplayObjectBin : public DisplayObject
 {
 public:
-	DisplayObject* layout_array[7];
-	Layout(void);
+	ObdTagBin* tag;
 	void draw(void);
 	void update(void);
-	Layout(uint16_t position);
+
+	DisplayObjectBin(ObdTagBin* tag_);
+};
+
+
+
+
+class LayoutPage
+{
+public:
+	DisplayObject* arr[12];
+	LayoutPage(uint16_t position_, unsigned char page_number_, unsigned char items_amount_);
+	void draw(void);
+	void update(void);
+	uint16_t position;
+	unsigned char page_number;
+	unsigned char items_amount;
+};
+
+
+
+class DisplayPages
+{
+public:
+	LayoutPage* pages[10];
+	LayoutPage* current_page;
+	DisplayPages(void);
+	void routine(void);
+
+
 };
 
 

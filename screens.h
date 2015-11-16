@@ -19,10 +19,6 @@ extern LCD_ILI9341 lcd;
 #define analogs_base_Y 26
 #define analogs_color 0x5555
 
-#define V_REF 2.95
-#define voltage_scale_factor 6.138
-
-#define voltage_scale(a) ((V_REF / 1024) * a * voltage_scale_factor)
 
 void draw_analogs(void);
 void update_period(unsigned long t);

@@ -1,8 +1,15 @@
 #ifndef buttons_h
 #define buttons_h
 
+#include "MODEL.h"
+#include <MultiLCD.h>
 
-#include "buttons.h"
+#if defined(ARDUINO) && ARDUINO >= 100
+#include "arduino.h"
+#else
+#include "WProgram.h"
+#endif
+
 
 
 
@@ -16,20 +23,13 @@
 
 #define button(a) ((current_buttons & a) == 0)
 
-unsigned char current_buttons;
-  
-unsigned char get_buttons(void)
-{
-  return ((PIND >> 1) & 0x0078) + (PINB & 0x03) + ((PINC & 0x01) << 2);
-}
-
-void update_buttons(void)
-{
-  current_buttons = get_buttons();
-}
 
 
+extern unsigned char current_buttons;
+extern unsigned char previous_buttons;
 
+unsigned char get_buttons(void);
+void update_buttons(void);
 
 
 

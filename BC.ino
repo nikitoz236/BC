@@ -7,6 +7,7 @@
 //$00$13$EE$10$10$10$CC$1F$1F$1F$1F$1F$1F$1F$1F$1F$1F$1F$34
 //$00$13$AA$AA$55$55$55$55$55$55$55$55$55$55$55$55$55$55$12
 
+#include "obdtestmap.h"
 #include <Arduino.h>
 #include <SPI.h>
 #include <MultiLCD.h>
@@ -26,7 +27,7 @@ LCD_ILI9341 lcd;
 
 
 MODEL* comp;
-Layout* mylayout;
+DisplayPages* mylayout;
 
 unsigned char a;
 
@@ -48,16 +49,20 @@ void setup()
 
 
   comp = new MODEL();
-  mylayout = new Layout(32);
+  
+  
+
+
+
 
 
   lcd.setXY(0, 0);
   lcd.setColor(VGA_GREEN);
   lcd.print("HONDA B16 Engine OBD computer");
-  mylayout->draw();
-
-  prepare_analogs();
-
+  
+  
+  mylayout = new DisplayPages();
+  
 
 	  
 
@@ -65,12 +70,7 @@ void setup()
   while(1)
   {
 	  comp->routine();
-	  if (comp->frame_recieved)
-	  {
-		  mylayout->update();
-		  update_period(comp->obd_update_period);
-		  comp->frame_recieved = false;
-	  }
+	  mylayout->routine();
   }
 }
 
